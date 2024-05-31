@@ -2,35 +2,27 @@
 
 const express = require("express");
 const bodyParser = require("body-parser");
+const serverless=require("serverless-http");
 const date = require(__dirname + "/date.js");
 const mongoose=require("mongoose");
 mongoose.set('strictQuery', false);
 const app = express();
-
-const DB="mongodb+srv://12112211:<Abc@123456>@cluster0.r2dsjdp.mongodb.net/hv?retryWrites=true&w=majority";
+const DB="mongodb+srv://hs1957490:Nishu%402001@cluster0.qhlqz6y.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0";
 const _=require("lodash");
 app.set('view engine', 'ejs');  //1
-
 app.use(bodyParser.urlencoded({extended: true})); //1
 app.use(express.static("public"));//1
-
-//const items = ["Buy Food", "Cook Food", "Eat Food"];   //1
-// const workItems = [];
-const mongoDB = "mongodb://127.0.0.1/thapa";
-// Wait for database to connect, logging an error if there is a problem 
+const mongoDB = "mongodb://127.0.0.1/thapa"; 
 main().catch(err => console.log(err));
 async function main() {
-  await mongoose.connect(mongoDB);
+  await mongoose.connect(DB);
   console.log("yes");
 }
 const assert=require("assert");
 const { isReadable } = require("stream");
 
-
-const itemschema=new mongoose.Schema(
-  {
+const itemschema=new mongoose.Schema({
         name:String,
-
    }
 );
 const Itemmodel=new mongoose.model("Itemmodel", itemschema); // create the collection 
@@ -38,29 +30,9 @@ const item1=new Itemmodel({name:"Welcome to your Today list"});
 const item2=new Itemmodel({name:"Hit the + Button to add anew item"});
 const item3=new Itemmodel({name:"<-- hit this to delete teh item"});
 const defaultitem=[item1, item2, item3];
-
-// item1.save();
-// item2.save();
-// item3.save();
-
-// Itemmodel.insertMany(defaultitem, function(err)
-// {
-//     if(err)
-//     {
-//          console.log("error in inserting ");
-//     }
-//     else
-//      {
-//       console.log("efault item are added to the database successfully");
-//      }
-// });
-const day = date.getDate();
-
-
-app.get("/", function(req, res) {
-
-
-
+const day = getDate();
+const router=express.Router();
+router.get("/", function(req, res) {
 Itemmodel.find({}, function(err, founditems){
   if(err)
   {
@@ -81,53 +53,31 @@ Itemmodel.find({}, function(err, founditems){
                console.log("default item are added to the database successfully");
              }
         });
-
           res.redirect("/");
-        //res.render("list", {listTitle: day, newListItems: founditems});
       }
       else
       {
         res.render("list", {listTitle: day, newListItems: founditems});
       }
-     
-    
   }
-
 });
  });
- 
-
  const customschema=new mongoose.Schema(
   {
     name:String ,
     items:[itemschema]
   }
  );
-
  const Custommodel=new mongoose.model("Custommodel", customschema);
-
- app.get("/:customlistname", function(req,res)
+ router.get("/:customlistname", function(req,res)
  {
       const customlistname=req.params.customlistname;
-      //const customlistname=_.capitalize(req.params.customlistname); can use the lodash also 
-
-    
-      // const list=new Custommodel(
-      //   {
-      //         name:customlistname,
-      //         items:defaultitem
-      //   }
-      // );
-      // list.save();
-
- 
       Custommodel.findOne({name:customlistname}, function(err, results)        // return object
       {
                   if(!err)
                   {
                     if(!results)
                     {
-                         //console.log("do not exist"); create the new one
                          const list=new Custommodel(
                           {
                                 name:customlistname,
@@ -139,24 +89,18 @@ Itemmodel.find({}, function(err, founditems){
                     }
                     else
                     {
-                         // console.log("exits"); show the existing list
                          res.render("list", {listTitle:customlistname, newListItems:results.items});
                     }
                   }
       });
-
-
  });
 
-app.post("/", function(req, res){
-
+router.post("/", function(req, res){
   const itemname = req.body.newItem;
   const listname=req.body.list;
   const item=new Itemmodel({
-
        name:itemname
   });
-
   if(listname==day)
   {
     item.save();
@@ -170,7 +114,6 @@ app.post("/", function(req, res){
                       {
                         foundlist.items.push(item);
                          foundlist.save();
-                         //item.save();
                          res.redirect("/"+listname);
                       }
                       else
@@ -178,15 +121,14 @@ app.post("/", function(req, res){
                         console.log(err);
                       }
          });
-
   }
 });
 
-app.get("/work", function(req,res){
+router.get("/work", function(req,res){
   res.render("list", {listTitle: "Work List", newListItems: workItems});
 });
 
-app.get("/about", function(req, res){
+router.get("/about", function(req, res){
   res.render("about");
 });
 
@@ -194,7 +136,7 @@ app.listen(3000, function() {
   console.log("Server started on port 3000");
 });
 
-app.post("/delete", function(req,res){
+router.post("/delete", function(req,res){
 
     const id=req.body.checkbox;
     const listname=req.body.listname;
@@ -219,7 +161,7 @@ app.post("/delete", function(req,res){
          {  
                  if(!err)
                  {
-                             res.redirect("/"+listname);
+                    res.redirect("/"+listname);
                  }
                  else
                  {
@@ -228,9 +170,37 @@ app.post("/delete", function(req,res){
 
          } );
     }
-    
-    
 });
+
+app.use("/.netlify/functions/api", router);
+function getDate () {
+
+  const today = new Date();
+
+  const options = {
+    weekday: "long",
+    day: "numeric",
+    month: "long"
+  };
+
+  return today.toLocaleDateString("en-US", options);
+
+};
+
+function getDay() {
+
+  const today = new Date();
+
+  const options = {
+    weekday: "long"
+  };
+
+  return today.toLocaleDateString("en-US", options);
+
+};
+
+
+module.exports.handler=serverless(app);
 
 
 
