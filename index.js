@@ -3,7 +3,6 @@
 const express = require("express");
 const bodyParser = require("body-parser");
 const serverless=require("serverless-http");
-const date = require(__dirname + "/date.js");
 const mongoose=require("mongoose");
 mongoose.set('strictQuery', false);
 const app = express();
@@ -13,6 +12,7 @@ app.set('view engine', 'ejs');  //1
 app.use(bodyParser.urlencoded({extended: true})); //1
 app.use(express.static("public"));//1
 const mongoDB = "mongodb://127.0.0.1/thapa"; 
+const PORT=process.env.PORT || 3000;
 main().catch(err => console.log(err));
 async function main() {
   await mongoose.connect(DB);
@@ -32,6 +32,9 @@ const item3=new Itemmodel({name:"<-- hit this to delete teh item"});
 const defaultitem=[item1, item2, item3];
 const day = getDate();
 const router=express.Router();
+router("/testing", function(req, res) {
+  res.send("hello");
+});
 router.get("/", function(req, res) {
 Itemmodel.find({}, function(err, founditems){
   if(err)
