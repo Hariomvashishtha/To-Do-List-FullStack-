@@ -4,10 +4,7 @@
   "main": "app.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node index.js",
-    "dev": "./node_modules/.bin/netlify-lambda serve src",
-    "build": "./node_modules/.bin/netlify-lambda build src",
-    "build2":"netlify deploy --prod"
+    "start": "node index.js"
   },
   "author": "",
   "license": "ISC",
