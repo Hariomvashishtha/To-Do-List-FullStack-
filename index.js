@@ -31,7 +31,7 @@ const item3=new Itemmodel({name:"<-- hit this to delete teh item"});
 const defaultitem=[item1, item2, item3];
 const day = getDate();
 const router=express.Router();
-router("/testing", function(req, res) {
+router.get("/testing", function(req, res) {
   res.send("hello");
 });
 router.get("/", function(req, res) {
