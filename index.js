@@ -2,7 +2,7 @@
 // adding raiway
 const express = require("express");
 const bodyParser = require("body-parser");
-const dotenv = require("dotenv");
+const dotenv=require("dotenv");
 const mongoose=require("mongoose");
 mongoose.set('strictQuery', false);
 const app = express();
@@ -137,7 +137,7 @@ router.get("/about", function(req, res){
 });
 
 app.listen(PORT,"0.0.0.0", () => {
-  console.log(`server is running on port ${port}`);
+  console.log(`server is running on port ${PORT}`);
 })
 
 router.post("/delete", function(req,res){
