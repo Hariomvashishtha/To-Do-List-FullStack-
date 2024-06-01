@@ -2,7 +2,6 @@
 // adding raiway
 const express = require("express");
 const bodyParser = require("body-parser");
-const serverless=require("serverless-http");
 const mongoose=require("mongoose");
 mongoose.set('strictQuery', false);
 const app = express();
@@ -201,10 +200,6 @@ function getDay() {
   return today.toLocaleDateString("en-US", options);
 
 };
-
-
-module.exports.handler=serverless(app);
-
 
 
 
