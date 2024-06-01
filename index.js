@@ -2,6 +2,7 @@
 // adding raiway
 const express = require("express");
 const bodyParser = require("body-parser");
+const dotenv = require("dotenv");
 const mongoose=require("mongoose");
 mongoose.set('strictQuery', false);
 const app = express();
@@ -11,6 +12,7 @@ app.set('view engine', 'ejs');  //1
 app.use(bodyParser.urlencoded({extended: true})); //1
 app.use(express.static("public"));//1
 const mongoDB = "mongodb://127.0.0.1/thapa"; 
+dotenv.config();
 const PORT=process.env.PORT || 3000;
 main().catch(err => console.log(err));
 async function main() {
@@ -134,9 +136,9 @@ router.get("/about", function(req, res){
   res.render("about");
 });
 
-app.listen(3000, function() {
-  console.log("Server started on port 3000");
-});
+app.listen(PORT,"0.0.0.0", () => {
+  console.log(`server is running on port ${port}`);
+})
 
 router.post("/delete", function(req,res){
 
